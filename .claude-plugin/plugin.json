@@ -1,0 +1,13 @@
+{
+  "name": "dbay",
+  "description": "DBay 记忆与知识库 MCP — 让 Claude Code 拥有跨会话长期记忆和项目知识检索能力",
+  "version": "1.0.0",
+  "author": {
+    "name": "DBay"
+  },
+  "homepage": "https://dbay.cloud",
+  "repository": "https://github.com/MatrixDriver/dbay-cc",
+  "license": "MIT",
+  "keywords": ["memory", "knowledge-base", "rag", "long-term-memory", "mcp"],
+  "skills": "./"
+}

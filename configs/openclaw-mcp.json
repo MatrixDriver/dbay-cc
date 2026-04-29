@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "dbay": {
+      "command": "uvx",
+      "args": ["dbay-mcp"]
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "dbay",
+  "owner": {
+    "name": "DBay"
+  },
+  "metadata": {
+    "description": "AI Agent 记忆与知识库 — 跨会话长期记忆 + 文档语义检索，支持 Claude Code / OpenClaw / Hermes Agent"
+  },
+  "plugins": [
+    {
+      "name": "dbay",
+      "description": "跨会话记忆 + 知识库检索，支持端到端加密记忆库",
+      "source": "./",
+      "category": "ai-tools",
+      "tags": ["memory", "knowledge-base", "rag", "mcp"]
+    }
+  ]
+}

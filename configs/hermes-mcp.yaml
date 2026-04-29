@@ -1,0 +1,6 @@
+mcp_servers:
+  dbay:
+    command: "uvx"
+    args: ["dbay-mcp"]
+    timeout: 60
+    connect_timeout: 30
