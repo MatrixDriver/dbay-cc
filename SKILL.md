@@ -144,6 +144,52 @@ claude mcp add --scope user dbay-sre-mcp -- dbay-sre-mcp
 
 OpenClaw 在 `~/.openclaw/mcp.json` 中添加 `dbay-sre-mcp` 条目；Hermes 在 `config.yaml` 中添加对应 `mcp_servers` 条目，env 字段需显式声明上述环境变量。
 
+## 常见坑
+
+### Hermes 的 `memory` 工具 ≠ DBay 记忆
+
+Hermes Agent **内置的 `memory` 工具** 只写入本地 `~/.hermes/` 目录，**不会写入 DBay**。要让信息进入 DBay 长期记忆，必须明确调用 DBay MCP 的 `memory_ingest` 工具或使用 `dbay mem ingest` CLI 命令。
+
+**在 Hermes 中保存到 DBay 的正确方式：**
+
+方式一（推荐 — MCP 工具，通过 uvx dbay-mcp）：
+```
+memory_ingest(content="...", memory_type="fact|decision|rejection|convention|procedural|episode", source="hermes-agent")
+```
+
+方式二（API 直调，当 MCP 未就绪时）：
+```python
+from dbay_cli.client import DbayClient
+client = DbayClient(base_url, api_key)
+client.mem_ingest(
+    mem_id="mem_xxx",
+    content="...",
+    role="assistant",
+    memory_type="decision",
+    source="hermes-agent"
+)
+```
+
+### `dbay mem ingest` CLI 选项
+
+```
+dbay mem ingest "..." [--type TYPE] [--source TAG] [--raw]
+```
+
+- `--type`：`fact|decision|rejection|convention|procedural|episode`，默认 `fact`
+- `--source`：来源标签（如 `cli`、`claude-code`、`hermes-agent`），默认 `cli`
+- `--raw`：把内容当作原始对话，让服务端 LLM 自动抽取（`signal="conversation"`）。**不加**此选项时默认按结构化记忆直接落库（`signal="memory"`），跟 MCP `memory_ingest` 行为一致。
+
+> 历史注：旧版本曾有 `--no-extract` 选项，因为客户端从未实现对应字段且会污染 `signal` 字段，已在 dbay-cli 修复后删除——升级到最新版即可，**不要再用 `--no-extract`**。
+
+### `memory_type` 是必填项
+
+当 `signal='memory'` 时，API 要求 `memory_type` 字段。可选值：`fact`, `decision`, `rejection`, `convention`, `procedural`, `episode`。不传会返回 400 错误。
+
+### 多平台共享同一记忆库
+
+DBay 支持多个 Agent（Hermes / Claude Code / OpenClaw）连接**同一个记忆库**。每条记忆通过 `source` 字段（`hermes-agent` / `claude-code` / `openclaw`）标识来源。三个平台都配好 MCP 后，在一个平台上存储的记忆，其他平台均可 `memory_recall` 搜索到。
+
 ## 注意事项
 
 - `dbay-mcp` 读取 `~/.dbay/config.json` 获取 API Key，确保 `dbay login` 已完成
