@@ -34,6 +34,16 @@ dbay login
 
 `dbay login` 会打开浏览器完成认证，API Key 存在 `~/.dbay/config.json`，不会进入 Agent 配置文件。
 
+**没有桌面浏览器（远程服务器、容器、SSH 会话）？** 在本地浏览器登录 [console.dbay.cloud](https://console.dbay.cloud) → "API Keys" 复制一个 key，然后在远端手写：
+
+```bash
+mkdir -p ~/.dbay
+cat > ~/.dbay/config.json <<EOF
+{ "endpoint": "https://api.dbay.cloud:8443", "api_key": "lk_xxx" }
+EOF
+chmod 600 ~/.dbay/config.json
+```
+
 ### 第二步：创建记忆库
 
 ```bash
@@ -50,22 +60,25 @@ dbay mem create --encrypted my-private-mem
 
 根据不同平台执行对应命令。
 
+每个平台的 MCP 配置都应该带上 `DBAY_SOURCE` 环境变量，DBay 用它给每条记忆打上"是哪个 Agent 写的"标签，溯源不会混。
+
 #### Claude Code
 
 ```bash
-claude mcp add --scope user dbay -- uvx dbay-mcp
+claude mcp add --scope user dbay --env DBAY_SOURCE=claude-code -- uvx dbay-mcp
 ```
 
 #### OpenClaw
 
-编辑 `~/.openclaw/mcp.json`（如文件不存在则创建），添加或合并以下内容：
+编辑 `~/.openclaw/openclaw.json`（OpenClaw 的主配置文件，已存在），把下面 `mcpServers.dbay` **合并**到文件顶层的 `mcpServers` 块里（不要新建 `mcp.json`）：
 
 ```json
 {
   "mcpServers": {
     "dbay": {
       "command": "uvx",
-      "args": ["dbay-mcp"]
+      "args": ["dbay-mcp"],
+      "env": { "DBAY_SOURCE": "openclaw" }
     }
   }
 }
@@ -75,13 +88,15 @@ claude mcp add --scope user dbay -- uvx dbay-mcp
 
 #### Hermes Agent
 
-在 Hermes 的 `config.yaml` 中添加：
+在 `~/.hermes/config.yaml` 的 `mcp_servers` 块下添加：
 
 ```yaml
 mcp_servers:
   dbay:
     command: "uvx"
     args: ["dbay-mcp"]
+    env:
+      DBAY_SOURCE: "hermes-agent"
     timeout: 60
     connect_timeout: 30
 ```
@@ -105,7 +120,7 @@ mcp_servers:
 
 ### 记忆溯源
 
-每次调用 `memory_ingest` 时，必须传入 `source` 参数标识自己的来源：
+每条记忆都通过 `source` 字段标识来源 Agent：
 
 | Agent | `source` 值 |
 |-------|-------------|
@@ -113,12 +128,12 @@ mcp_servers:
 | OpenClaw | `openclaw` |
 | Hermes Agent | `hermes-agent` |
 
-示例：
+**推荐做法**：按上一节在每个 Agent 的 MCP 配置里设 `DBAY_SOURCE` 环境变量，dbay-mcp 会把它作为 `source` 字段的默认值。这样调用 `memory_ingest` 时不用每次都显式传 `source`，也不会忘记。
+
+如需在某次调用里**临时**覆盖（例如代理别的 Agent 写记忆），仍可显式传：
 ```
 memory_ingest(content="用户的偏好是...", memory_type="fact", source="openclaw")
 ```
-
-这样记忆库中的每条记忆都有源头可查，不会混淆是哪个 Agent 记录的。
 
 ## 可选：SRE 诊断 MCP
 
@@ -142,7 +157,7 @@ Claude Code:
 claude mcp add --scope user dbay-sre-mcp -- dbay-sre-mcp
 ```
 
-OpenClaw 在 `~/.openclaw/mcp.json` 中添加 `dbay-sre-mcp` 条目；Hermes 在 `config.yaml` 中添加对应 `mcp_servers` 条目，env 字段需显式声明上述环境变量。
+OpenClaw 在 `~/.openclaw/openclaw.json` 的 `mcpServers` 块里添加 `dbay-sre-mcp` 条目；Hermes 在 `~/.hermes/config.yaml` 的 `mcp_servers` 块里添加对应条目，`env` 字段需显式声明上述环境变量。
 
 ## 常见坑
 

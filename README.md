@@ -35,27 +35,21 @@ claude plugin marketplace add https://github.com/MatrixDriver/dbay-cc
 claude plugin install dbay@dbay --scope user
 ```
 
-**方式四：手动**
-
-```bash
-git clone https://github.com/MatrixDriver/dbay-cc ~/.claude/skills/dbay
-```
-
 ## 快速开始
 
 ```bash
 # 1. 安装 CLI
 pip install dbay-cli
 
-# 2. 登录（打开浏览器完成认证）
+# 2. 登录（打开浏览器完成认证；headless 环境见 SKILL.md）
 dbay login
 
 # 3. 创建记忆库
 dbay mem create my-mem
 dbay mem use my-mem
 
-# 4. 注册 MCP 到 Claude Code
-claude mcp add --scope user dbay -- uvx dbay-mcp
+# 4. 注册 MCP 到 Claude Code（DBAY_SOURCE 让 dbay 知道是谁写的）
+claude mcp add --scope user dbay --env DBAY_SOURCE=claude-code -- uvx dbay-mcp
 
 # 完成！Claude 现在拥有跨会话记忆。
 ```
@@ -82,12 +76,18 @@ dbay mem use my-private-mem
 
 ## 多平台配置
 
+每个 Agent 都通过 `DBAY_SOURCE` 环境变量给写入的记忆打来源标签，溯源不会混。
+
 | 平台 | MCP 配置方式 |
 |------|-------------|
-| Claude Code | `claude mcp add --scope user dbay -- uvx dbay-mcp` |
-| OpenClaw | 编辑 `~/.openclaw/mcp.json`，添加 `dbay` 条目，重启 gateway |
-| Hermes Agent | 编辑 `config.yaml`，在 `mcp_servers` 下添加 `dbay` 条目 |
+| Claude Code | `claude mcp add --scope user dbay --env DBAY_SOURCE=claude-code -- uvx dbay-mcp` |
+| OpenClaw | 把 `dbay` 条目（带 `env.DBAY_SOURCE=openclaw`）合并进 `~/.openclaw/openclaw.json` 的 `mcpServers` 块，重启 gateway |
+| Hermes Agent | 在 `~/.hermes/config.yaml` 的 `mcp_servers` 下添加 `dbay` 条目（带 `env.DBAY_SOURCE=hermes-agent`） |
 
 详细配置示例见 [SKILL.md](./SKILL.md) 和 `configs/` 目录。
-I](https://pypi.org/project/dbay-mcp/) — MCP Server 包
+
+## Links
+
+- [DBay Console](https://console.dbay.cloud) — Web 管理后台
+- [dbay-mcp on PyPI](https://pypi.org/project/dbay-mcp/) — MCP Server 包
 - [dbay-cli on PyPI](https://pypi.org/project/dbay-cli/) — CLI 工具包

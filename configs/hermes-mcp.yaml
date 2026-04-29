@@ -2,5 +2,7 @@ mcp_servers:
   dbay:
     command: "uvx"
     args: ["dbay-mcp"]
+    env:
+      DBAY_SOURCE: "hermes-agent"
     timeout: 60
     connect_timeout: 30
