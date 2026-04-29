@@ -89,13 +89,5 @@ dbay mem use my-private-mem
 | Hermes Agent | 编辑 `config.yaml`，在 `mcp_servers` 下添加 `dbay` 条目 |
 
 详细配置示例见 [SKILL.md](./SKILL.md) 和 `configs/` 目录。
-
-## 可选：SRE 诊断 MCP
-
-运维同学习可以加装 `dbay-sre-mcp`，获得日志搜索、租户定位、数据一致性检查等 SRE 工具。详见 [SKILL.md](./SKILL.md) 末尾章节。
-
-## Links
-
-- [DBay Console](https://console.dbay.cloud) — Web 管理后台
-- [dbay-mcp on PyPI](https://pypi.org/project/dbay-mcp/) — MCP Server 包
+I](https://pypi.org/project/dbay-mcp/) — MCP Server 包
 - [dbay-cli on PyPI](https://pypi.org/project/dbay-cli/) — CLI 工具包
