@@ -103,6 +103,23 @@ mcp_servers:
 | `knowledge_list_documents` | 列出文档 |
 | `knowledge_get_chunk` | 获取文档片段 |
 
+### 记忆溯源
+
+每次调用 `memory_ingest` 时，必须传入 `source` 参数标识自己的来源：
+
+| Agent | `source` 值 |
+|-------|-------------|
+| Claude Code | `claude-code` |
+| OpenClaw | `openclaw` |
+| Hermes Agent | `hermes-agent` |
+
+示例：
+```
+memory_ingest(content="用户的偏好是...", memory_type="fact", source="openclaw")
+```
+
+这样记忆库中的每条记忆都有源头可查，不会混淆是哪个 Agent 记录的。
+
 ## 可选：SRE 诊断 MCP
 
 如果需要日志诊断、租户定位等 SRE 运维能力，可额外安装 `dbay-sre-mcp`：

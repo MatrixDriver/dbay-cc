@@ -9,7 +9,8 @@
 | 跨会话记忆 | Agent 记住你的偏好、决策、项目上下文，下次对话自动加载 |
 | 知识库检索 | 上传 PDF/DOCX/MD 文档，Agent 语义搜索并引用 |
 | 端到端加密 | 记忆内容本地加密后上传，服务端不可见明文 |
-| 多平台 | 同一套 MCP 在 Claude Code / OpenClaw / Hermes 通用 |
+| 多平台 | 同一套 MCP 在 Claude Code / OpenClaw / Hermes 通用，共享记忆库 |
+| 记忆溯源 | 每条记忆自动标注来源（claude-code / openclaw / hermes-agent），可追溯是谁记的 |
 
 ## 一键安装
 
