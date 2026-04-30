@@ -70,21 +70,19 @@ claude mcp add --scope user dbay --env DBAY_SOURCE=claude-code -- uvx dbay-mcp
 
 #### OpenClaw
 
-编辑 `~/.openclaw/openclaw.json`（OpenClaw 的主配置文件，已存在），把下面 `mcpServers.dbay` **合并**到文件顶层的 `mcpServers` 块里（不要新建 `mcp.json`）：
+OpenClaw 自带 `mcp set` 子命令，**直接跑这一条即可**（自动写入 `~/.openclaw/openclaw.json` 的 `mcp.servers` 块，已有条目会保留）：
 
-```json
-{
-  "mcpServers": {
-    "dbay": {
-      "command": "uvx",
-      "args": ["dbay-mcp"],
-      "env": { "DBAY_SOURCE": "openclaw" }
-    }
-  }
-}
+```bash
+openclaw mcp set dbay '{"command":"uvx","args":["dbay-mcp"],"env":{"DBAY_SOURCE":"openclaw"}}'
 ```
 
-然后重启 gateway：`openclaw gateway restart`
+OpenClaw runtime 用 chokidar 监听配置文件，**保存后会自动热重载**，无需手动重启 gateway。验证：
+
+```bash
+openclaw mcp show dbay
+```
+
+如果你只想看真实 JSON 落盘形态，路径是 `~/.openclaw/openclaw.json`，dbay 条目会出现在 `mcp.servers.dbay` 下。
 
 #### Hermes Agent
 

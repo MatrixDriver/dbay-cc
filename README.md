@@ -12,23 +12,39 @@
 | 多平台 | 同一套 MCP 在 Claude Code / OpenClaw / Hermes 通用，共享记忆库 |
 | 记忆溯源 | 每条记忆自动标注来源（claude-code / openclaw / hermes-agent），可追溯是谁记的 |
 
-## 一键安装
+## 一键安装（对话式）
 
-**方式一：让 Agent 自动安装（推荐）**
-
-直接对你的 AI Agent 说：
+**直接把这一行发给你的 AI Agent**（Claude Code / OpenClaw / Hermes 都支持）：
 
 ```
-帮我安装这个 skill：https://github.com/MatrixDriver/dbay-cc
+帮我跑：bash <(curl -fsSL https://raw.githubusercontent.com/MatrixDriver/dbay-cc/main/install.sh)
 ```
 
-**方式二：npx skills 安装**
+脚本会自动：装 dbay-cli → 引导你拿 API Key → 创建记忆库 → 注册 MCP 到当前 Agent。
 
-```bash
-npx skills add MatrixDriver/dbay-cc
+第一次跑会让你去 [console.dbay.cloud](https://console.dbay.cloud) 注册（**免费、不需要邀请码**）→ 复制 API Key → 把 Key 粘回对话。Agent 会带着 Key 重跑：
+
+```
+DBAY_API_KEY=lk_xxx bash <(curl -fsSL https://raw.githubusercontent.com/MatrixDriver/dbay-cc/main/install.sh)
 ```
 
-**方式三：Claude Code Plugin**
+完成后按提示让 MCP 生效：
+
+| 平台 | 让新 MCP 生效 |
+|------|--------------|
+| Claude Code | 重启 `claude` 进程 |
+| OpenClaw | 自动监听配置文件，无需操作 |
+| Hermes Agent | 在对话框输入 `/reload-mcp` |
+
+---
+
+### 其他安装方式
+
+**手动按 SKILL.md 操作**
+
+`pip install dbay-cli` → `dbay login` → `dbay mem create` → 编辑 Agent MCP 配置（详见 [SKILL.md](./SKILL.md)）。
+
+**Claude Code Plugin**
 
 ```bash
 claude plugin marketplace add https://github.com/MatrixDriver/dbay-cc

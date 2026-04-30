@@ -1,9 +1,11 @@
 {
-  "mcpServers": {
-    "dbay": {
-      "command": "uvx",
-      "args": ["dbay-mcp"],
-      "env": { "DBAY_SOURCE": "openclaw" }
+  "mcp": {
+    "servers": {
+      "dbay": {
+        "command": "uvx",
+        "args": ["dbay-mcp"],
+        "env": { "DBAY_SOURCE": "openclaw" }
+      }
     }
   }
 }
